@@ -1,0 +1,47 @@
+
+{
+    "billed_to": [
+        
+    ],
+
+    "shipped_to": [
+
+    ],
+
+    "buyers_po_no": [
+        
+    ],
+
+    "particulars": [
+    
+    ],
+
+    "hsn": [
+
+    ],
+
+    "uom": [
+
+    ],
+
+    "price": [
+
+    ],
+
+    "igst%": [
+
+    ],
+
+    "contact_person": [
+
+    ],
+
+    "billed_to_gstin": [
+
+    ],
+
+    "shipped_to_gstin": [
+
+    ]
+
+}
