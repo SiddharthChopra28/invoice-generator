@@ -75,6 +75,24 @@ def format_text(text, chars):
     # print(new_list)
     return new_list
 
+def float_2_decimals(number):
+    if '.' not in str(number):
+        return str(number)
+    
+    decimal_places = str(number).split('.')[1]
+    
+    
+    if len(decimal_places) == 1:
+        print('hi')
+        new_num = (str(number)+'0')
+        return new_num
+        
+    elif len(decimal_places) == 2:
+        return str(number)
+    
+    elif len(decimal_places) > 2:
+        return float_2_decimals(round(number, 2))
+
 
 class InvoiceForm(QWidget):
     def __init__(self):
@@ -121,7 +139,7 @@ class InvoiceForm(QWidget):
         header_layout.addWidget(new_form_button)
         header_layout.addWidget(generate_form_button)
         
-        title = QLabel("    Performa Invoice generator")
+        title = QLabel("    Vidya Printing Co. PI generator")
         title.setFont(QFont('Arial', 20, QFont.Bold))
         header_layout.addWidget(title, alignment=Qt.AlignRight)
         
@@ -352,7 +370,7 @@ class InvoiceForm(QWidget):
                 try:
                     amount_before_tax = float(lst[3])*float(lst[5])
                     coords = COORDINATES["amount_before_tax"]
-                    self.pdfmaker.draw(str(amount_before_tax), coords['x'], (coords['y']-(COORDINATES["LINE_GAP_MAIN_Y"]*n)), coords['font'], coords['color'], coords['size'])
+                    self.pdfmaker.draw(float_2_decimals(amount_before_tax), coords['x'], (coords['y']-(COORDINATES["LINE_GAP_MAIN_Y"]*n)), coords['font'], coords['color'], coords['size'])
 
                     amounts_before_taxes.append(amount_before_tax)
                     
@@ -362,19 +380,26 @@ class InvoiceForm(QWidget):
         total_amount_before_tax = 0
         for i in amounts_before_taxes:
             total_amount_before_tax+=i
+
+        
         
         for n, i in enumerate(amounts_before_taxes):
-            taxes_in_each_row.append(tax_percent_in_each_row[n]*i/100)
+            try:
+                
+                taxes_in_each_row.append(tax_percent_in_each_row[n]*i/100)
+                
+            except:
+                taxes_in_each_row.append(0)
         
         total_tax = 0
         for i in taxes_in_each_row:
             total_tax += i
         
         coords = COORDINATES["total_amount_before_tax"]
-        self.pdfmaker.draw(str(total_amount_before_tax), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
+        self.pdfmaker.draw(float_2_decimals(total_amount_before_tax), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
         
         coords = COORDINATES["total_tax"]
-        self.pdfmaker.draw(str(round(total_tax, 2)), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
+        self.pdfmaker.draw(float_2_decimals(total_tax), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
         
         try:
             freight_tax = max(tax_percent_in_each_row)
@@ -390,14 +415,14 @@ class InvoiceForm(QWidget):
         round_off = round(rounded_off_grand_total - grand_total, 2)
         
         coords = COORDINATES["grand_total"]
-        self.pdfmaker.draw(str(rounded_off_grand_total), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
+        self.pdfmaker.draw(float_2_decimals(rounded_off_grand_total), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
         
         coords = COORDINATES["round_off"]
-        self.pdfmaker.draw(str(round_off), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
+        self.pdfmaker.draw(float_2_decimals(round_off), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
 
         if freight_charges != 0:
             coords = COORDINATES["freight_charges"]
-            self.pdfmaker.draw(str(total_freight_charges), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
+            self.pdfmaker.draw(float_2_decimals(total_freight_charges), coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
 
             coords = COORDINATES["freight_disclaimer"]
             self.pdfmaker.draw(f"(inluding IGST@{freight_tax}%)", coords['x'], coords['y'], coords['font'], coords['color'], coords['size'])
@@ -512,7 +537,7 @@ class PdfMaker:
 
         except:
             pass
-            
+    
 
     def draw(self, text, x, y, font, color, size):
         self.can.setFont(font, size)
@@ -539,7 +564,7 @@ class PdfMaker:
         page0 = output.pages[0]
         output.remove_page(page0)
 
-        desktop_path = os.path.expanduser("~/Desktop")
+        desktop_path = os.path.expanduser("~/")
 
         if 'PIs' not in os.listdir(desktop_path):
             os.mkdir(f"{desktop_path}/PIs")
